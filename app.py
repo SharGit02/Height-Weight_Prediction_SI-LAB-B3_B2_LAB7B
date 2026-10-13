@@ -8,39 +8,7 @@ Metrics are computed live from the loaded pipeline on the dataset.
 """
 
 import os
-import sys
-import subprocess
 import warnings
-
-# ── sklearn version guard (PKL saved with 1.6.1) ──────────────────────────────
-try:
-    import importlib.metadata as _ilm
-    _sk_ver = _ilm.version("scikit-learn")
-except Exception:
-    _sk_ver = "unknown"
-
-if not _sk_ver.startswith("1.6"):
-    # Auto-fix: install the correct version, then stop and tell the user to restart
-    import streamlit as st
-    st.set_page_config(page_title="Fixing sklearn...", page_icon="P")
-    st.warning(
-        "**scikit-learn version mismatch detected.**  \n"
-        "The model file was saved with scikit-learn **1.6.1** but version **{}** is installed.  \n\n"
-        "Running `pip install scikit-learn==1.6.1` now — "
-        "**please wait ~30 seconds then refresh this page.**".format(_sk_ver)
-    )
-    with st.spinner("Installing scikit-learn==1.6.1 ..."):
-        result = subprocess.run(
-            [sys.executable, "-m", "pip", "install", "scikit-learn==1.6.1", "-q"],
-            capture_output=True, text=True
-        )
-    if result.returncode == 0:
-        st.success("Done! scikit-learn 1.6.1 installed. **Please refresh the page now.**")
-    else:
-        st.error("Install failed:\n" + result.stderr)
-        st.code("pip install scikit-learn==1.6.1", language="bash")
-    st.stop()
-
 import numpy as np
 import pandas as pd
 import joblib
